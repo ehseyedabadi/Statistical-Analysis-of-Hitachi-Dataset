@@ -1,10 +1,10 @@
-# Carica le librerie necessarie
+# Load the necessary libraries
 library(dplyr)
 
-# 1. Carica il dataset
+# 1. Load the dataset
 data <- readRDS("C:\\Users\\a_fic\\Documents\\HITACHI SL PROJECT WORK\\DATA_Fleet_1.rds")
 
-# 2. Filtra i dati per considerare solo le fasi di scarica
+# 2. Filter data to consider only the discharge phases
 data_filtered <- data %>%
   filter(
     ID_Ph_C1 == "S" & ID_Ph_C2 == "S" & ID_Ph_C3 == "S" & ID_Ph_C4 == "S",
@@ -12,7 +12,7 @@ data_filtered <- data %>%
     !is.na(VBatt_C1), !is.na(VBatt_C2), !is.na(VBatt_C3), !is.na(VBatt_C4)
   )
 
-# 3. Calcola le metriche chiave per ogni fase di scarica usando la mediana
+# 3. Calculate key metrics for each discharge stage using the median
 data_durations <- data_filtered %>%
   group_by(Vehicle, ID_GR) %>%
   summarise(
@@ -23,15 +23,15 @@ data_durations <- data_filtered %>%
   ) %>%
   ungroup()
 
-# 4. Rimuovi righe con dati mancanti o durate non valide
+# 4. Remove rows with missing data or invalid durations
 data_durations <- data_durations %>%
   filter(!is.na(discharge_duration) & discharge_duration > 0)
 
-# 5. Inizializza la colonna cluster
+# 5. Initialize the cluster column
 data_durations <- data_durations %>%
   mutate(cluster = NA)
 
-# 6. Applica il clustering per ogni treno
+# 6. Apply clustering for each train
 cluster_results <- list()
 
 for (train in unique(data_durations$Vehicle)) {
@@ -52,7 +52,7 @@ for (train in unique(data_durations$Vehicle)) {
   cluster_results[[train]] <- kmeans_result
 }
 
-# 7. Assegna le etichette di performance ai cluster
+# 7. Assign performance labels to clusters
 cluster_summary <- data_durations %>%
   group_by(Vehicle, cluster) %>%
   summarise(
@@ -67,29 +67,29 @@ cluster_summary <- data_durations %>%
     )
   )
 
-# Unisci i tipi di cluster al dataset originale
+# Merge cluster types into the original dataset
 data_durations <- data_durations %>%
   left_join(cluster_summary %>% select(Vehicle, cluster, cluster_type), by = c("Vehicle", "cluster"))
 
-# 8. Prepara i dati per il plotting
+# 8. Prepare data for plotting
 pch_values <- c(0:14)
 train_markers <- setNames(pch_values[1:length(unique(data_durations$Vehicle))], 
                           unique(data_durations$Vehicle))
 
-# Definisci i colori per i cluster
+# Define colors for clusters
 cluster_colors <- c("Low Performance" = "red", 
                     "Medium Performance" = "orange", 
                     "High Performance" = "green")
 
-# 9. Crea il plot
+# 9. Create the plot
 par(mar = c(5, 4, 4, 10))
 
-# Calcola i limiti ottimali per l'asse y
+# Calculate the optimal bounds for the y-axis
 y_min <- 21
 y_max <- 24.5
 y_buffer <- (y_max - y_min) * 0.05
 
-# Crea il plot base
+# Create the basic plot
 plot(data_durations$discharge_duration, 
      data_durations$avg_voltage,
      type = "n",
@@ -100,7 +100,7 @@ plot(data_durations$discharge_duration,
      ylim = c(y_min - y_buffer, y_max + y_buffer),
      yaxp = c(y_min, y_max, 4))
 
-# Aggiungi i punti per ogni combinazione di treno e cluster
+# Add the points for each train and cluster combination
 for (train in names(train_markers)) {
   for (perf_type in names(cluster_colors)) {
     subset_data <- data_durations %>%
@@ -113,7 +113,7 @@ for (train in names(train_markers)) {
   }
 }
 
-# Aggiungi la legenda dei cluster
+# Add cluster legend
 legend("topright",
        inset = c(-0.2, 0),
        xpd = TRUE,
@@ -123,7 +123,7 @@ legend("topright",
        title = "Performance",
        cex = 0.8)
 
-# Aggiungi la legenda dei treni
+# Add train legend
 legend("topright",
        inset = c(-0.2, 0.3),
        xpd = TRUE,
@@ -132,5 +132,5 @@ legend("topright",
        title = "Trains",
        cex = 0.8)
 
-# 10. Salva i risultati
+# 10. Save the results
 write.csv(data_durations, "clustered_data_with_labels.csv", row.names = FALSE)
