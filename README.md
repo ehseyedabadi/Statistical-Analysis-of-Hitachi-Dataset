@@ -262,11 +262,9 @@ Future developments include:
 
 ```text
 ├── README.md
-├── data/
+├── LICENSE
 ├── scripts/
-├── results/
 ├── figures/
-└── presentation/
 ```
 
 ---
