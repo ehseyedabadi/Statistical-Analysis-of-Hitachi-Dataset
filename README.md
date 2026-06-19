@@ -275,7 +275,7 @@ Future developments include:
 
 **Professor:** Antonio Lepore
 
-**Academic Year:** 2025–2026
+**Academic Year:** 2024–2025
 
 ---
 
