@@ -22,16 +22,13 @@ Low-voltage Nickel-Cadmium (Ni-Cd) batteries are critical components in high-spe
 
 ### Project Goals:
 
-* 
-**Identify Faulty Batteries:** Detect disparities and anomalous power/current behavior during discharging phases.
+* **Identify Faulty Batteries:** Detect disparities and anomalous power/current behavior during discharging phases.
 
 
-* 
-**Isolate Critical Trains:** Group and rank trains in the fleet based on recurring battery system nonconformities.
+* **Isolate Critical Trains:** Group and rank trains in the fleet based on recurring battery system nonconformities.
 
 
-* 
-**Statistical Modeling:** Establish a resilient, multivariate process monitoring pipeline using Compositional Data (CoDa) analysis.
+* **Statistical Modeling:** Establish a resilient, multivariate process monitoring pipeline using Compositional Data (CoDa) analysis.
 
 
 
@@ -43,30 +40,15 @@ The project analyzes telemetry data from **16 high-speed trains** belonging to `
 
 | Variable Name | Description |
 | --- | --- |
-| `Timestamp` | Sampling time of telemetry data 
+| `Timestamp` | Sampling time of telemetry data |
+| `Vehicle` | Unique identification code across the 16 trains |
+| `IBatt_Ci` | Current intensity for battery module $i$ ($i = 1, 2, 3, 4$) |
+| `VBatt_Ci` | Battery voltage level for module $i$ |
+| `ID_Ph_Ci` | Operating phase of the battery system |
+| `ID_GR` | Discharge-charge cycle group ID |
+| `VEHICLE_SPEED` | Current train speed in km/h |
+| `GPS_LAT / LON` | Geospatial coordinate mapping of the train |
 
- |
-| `Vehicle` | Unique identification code across the 16 trains 
-
- |
-| `IBatt_Ci` | Current intensity for battery module $i$ ($i = 1, 2, 3, 4$) 
-
- |
-| `VBatt_Ci` | Battery voltage level for module $i$ 
-
- |
-| `ID_Ph_Ci` | Operating phase of the battery system 
-
- |
-| `ID_GR` | Discharge-charge cycle group ID 
-
- |
-| `VEHICLE_SPEED` | Current train speed in km/h 
-
- |
-| `GPS_LAT / LON` | Geospatial coordinate mapping of the train 
-
- |
 
 ---
 
@@ -107,18 +89,13 @@ The analytics pipeline is segmented into three major operational steps:
 
 
 * Implemented a two-phase control framework:
-* 
-**Phase I (80% of Train 1 data):** Outlier elimination and baseline Upper Control Limit (UCL) establishment.
+* **Phase I (80% of Train 1 data):** Outlier elimination and baseline Upper Control Limit (UCL) establishment.
 
 
-* 
-**Phase II (20% of Train 1 data):** Real-time monitoring validation.
+* **Phase II (20% of Train 1 data):** Real-time monitoring validation.
 
 
-* 
-**Validation:** Model deployment on an entirely separate train profile (`Train 15`) to assess anomaly sensitivity.
-
-
+* **Validation:** Model deployment on an entirely separate train profile (`Train 15`) to assess anomaly sensitivity.
 
 
 
@@ -128,12 +105,10 @@ The analytics pipeline is segmented into three major operational steps:
 
 ### PCA Loading & Variance Profile
 
-* 
-**PC1 (~50% Variance Explained):** Strongly driven by *Discharging Time* and *Final Voltage*.
+* **PC1 (~50% Variance Explained):** Strongly driven by *Discharging Time* and *Final Voltage*.
 
 
-* 
-**PC2 (~20% Variance Explained):** Heavily influenced by *Median Current* and *Starting Voltage*.
+* **PC2 (~20% Variance Explained):** Heavily influenced by *Median Current* and *Starting Voltage*.
 
 
 * Together, the top two components effectively capture **~70% of the entire dataset's variation**.
@@ -144,12 +119,10 @@ The analytics pipeline is segmented into three major operational steps:
 
 K-Means separated behavior into clear diagnostic profiles:
 
-* 
-**Cluster 1 (Heavy Load / Start-Up):** Characterized by high discharge intensity coupled with shorter durations.
+* **Cluster 1 (Heavy Load / Start-Up):** Characterized by high discharge intensity coupled with shorter durations.
 
 
-* 
-**Cluster 2 (Normal Operations):** Characterized by standard, steady-state medium discharge durations under lower load intensity.
+* **Cluster 2 (Normal Operations):** Characterized by standard, steady-state medium discharge durations under lower load intensity.
 
 
 
@@ -160,11 +133,8 @@ When evaluated across behavioral classification algorithms, clear disparities em
 | Train ID | Low Performance Cycles | Medium Performance Cycles | High Performance Cycles | Status Diagnostic |
 | --- | --- | --- | --- | --- |
 | **Train 1** | 64 | 63 | 1 | Operational (Stable Baseline) 
-
- |
 | **Train 15** | 80 | 45 | 0 | <br>**Critical Out-of-Control (Faulty Battery 3/4 Module)** 
 
- |
 
 > ⚠️ **Diagnostic Note:** Boxplot and ternary analysis of `Train 15` revealed a steep drop in median power precisely on its third and fourth battery modules, confirming localized degradation that caused immediate, out-of-control signals across all validation phases.
 > 
@@ -200,16 +170,13 @@ cd Statistical-Analysis-of-Hitachi-Dataset
 
 ## 🔮 Future Perspectives
 
-* 
-**Framework Scalability:** Optimize the $T^2$ CoDa pipeline to dynamically generalize and compute baseline metrics across the remaining trains in the fleet automatically.
+* **Framework Scalability:** Optimize the $T^2$ CoDa pipeline to dynamically generalize and compute baseline metrics across the remaining trains in the fleet automatically.
 
 
-* 
-**Environmental Conditioning:** Integrate operational environmental factors (e.g., ambient external temperature changes) to ensure the baseline control metrics remain highly resilient.
+* **Environmental Conditioning:** Integrate operational environmental factors (e.g., ambient external temperature changes) to ensure the baseline control metrics remain highly resilient.
 
 
-* 
-**Prognostics Integration:** Combine real-time SPC out-of-control triggers with machine learning regression modules to estimate the Remaining Useful Life (RUL) of target battery modules.
+* **Prognostics Integration:** Combine real-time SPC out-of-control triggers with machine learning regression modules to estimate the Remaining Useful Life (RUL) of target battery modules.
 
 
 
@@ -218,31 +185,22 @@ cd Statistical-Analysis-of-Hitachi-Dataset
 ## 👥 Contributors & Course Info
 
 * **University:** Università degli Studi di Napoli Federico II
-* 
-**Course:** Statistical Lab for Industrial Data Analysis 
+* **Course:** Statistical Lab for Industrial Data Analysis 
 
 
-* 
-**Professor:** Prof. Antonio Lepore 
+* **Professor:** Prof. Antonio Lepore 
 
 
-* 
-**Project Group:** Group 9 
+* **Project Group:** Group 9 
 
 
-* 
-**Donato D’Ambrosio** (M62002985) 
+* **Donato D’Ambrosio** (M62002985) 
 
 
-* 
-**Antonio Fico** (M62002880) 
+* **Antonio Fico** (M62002880) 
 
 
-* 
-**Ehsan Seyedabadi** (P55000046) 
-
-
-
+* **Ehsan Seyedabadi** (P55000046) 
 
 
 ---
